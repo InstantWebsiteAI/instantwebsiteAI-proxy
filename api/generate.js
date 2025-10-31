@@ -1,16 +1,6 @@
 export default async function handler(req, res) {
-  // ✅ Proper CORS configuration for Shopify & external embedding
-  const allowedOrigins = [
-    'https://instantwebsite-ai-proxy.vercel.app',
-    'https://admin.shopify.com',
-    'https://*.myshopify.com'
-  ];
-
-  const origin = req.headers.origin || '';
-  const allowed = allowedOrigins.find(o => origin.includes(o));
-  res.setHeader('Access-Control-Allow-Origin', allowed || 'https://instantwebsite-ai-proxy.vercel.app');
-  res.setHeader('Vary', 'Origin');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  // Allow all origins for now
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST,PUT,DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
 
@@ -34,9 +24,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/preview.html?ts=${Date.now()}&name=${encodeURIComponent(
-      name
-    )}&business=${encodeURIComponent(businessType)}&style=${encodeURIComponent(style)}`;
+    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/preview.html?ts=${Date.now()}&name=${encodeURIComponent(name)}&business=${encodeURIComponent(businessType)}&style=${encodeURIComponent(style)}`;
 
     return res.status(200).json({
       success: true,
