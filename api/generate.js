@@ -25,9 +25,8 @@ export default async function handler(req, res) {
       });
     }
 
-    // For now, return a success response with mock data
-    // Later you can integrate actual AI website generation here
-    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/preview.html?ts=${Date.now()}&name=${encodeURIComponent(name)}&business=${encodeURIComponent(businessType)
+    // Create preview URL with correct domain
+    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/preview.html?ts=${Date.now()}&name=${encodeURIComponent(name)}&business=${encodeURIComponent(businessType)}`;
 
     return res.status(200).json({
       success: true,
