@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instant Website Generator</title>
+  <style>
+    :root { --bg:#0e0e12; --panel:#15151d; --text:#ffffff; --muted:#a7b0c0; --accent:#00bfff; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+    header { padding: 28px 20px; text-align: center; background: linear-gradient(180deg, rgba(0,191,255,.08), rgba(0,0,0,0)); }
+    h1 { margin: 0 0 8px; font-weight: 700; letter-spacing: .5px; }
+    p.sub { margin: 0; color: var(--muted); }
+    main { display: grid; place-items: center; padding: 36px 20px 80px; }
+    form {
+      width: 100%; max-width: 520px; background: var(--panel);
+      padding: 22px; border-radius: 14px; border: 1px solid rgba(0,191,255,.18);
+      box-shadow: 0 10px 40px rgba(0,191,255,.08);
+    }
+    .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 640px) { .row.two { grid-template-columns: 1fr 1fr; } }
+    label { font-size: 13px; color: var(--muted); display: block; margin: 6px 2px; }
+    input, textarea, select, button {
+      width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,.08);
+      background: #1b1b25; color: var(--text); font-size: 15px; outline: none; transition: border .2s, box-shadow .2s, background .2s;
+    }
+    input::placeholder, textarea::placeholder { color: #8ea4bd; }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,191,255,.15);
+      background:#1f2230;
+    }
+    button {
+      background: linear-gradient(90deg, var(--accent), #007bff); border: none; font-weight: 700; cursor: pointer;
+      letter-spacing: .2px; margin-top: 6px; box-shadow: 0 10px 30px rgba(0,191,255,.25);
+    }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .status { margin-top: 14px; color: var(--muted); font-size: 14px; min-height: 20px; }
+    .result { margin-top: 18px; padding: 16px; background: #10131a; border: 1px solid rgba(255,255,255,.06); border-radius: 12px; display:none; }
+    .result a { color: #00ffae; font-weight: 700; text-decoration: none; }
+    footer { text-align:center; color:#7f8aa3; font-size:12px; padding: 24px 0 40px; }
+    .small { font-size: 12px; color:#8ea4bd; margin-top:6px;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Instant Website Generator ⚡</h1>
+    <p class="sub">Give us a few details — get a live preview link instantly.</p>
+  </header>
+
+  <main>
+    <form id="generateForm" autocomplete="on">
+      <div class="row two">
+        <div>
+          <label for="name">Your Name</label>
+          <input id="name" name="name" placeholder="e.g., Ali Aziz" required />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" type="email" name="email" placeholder="you@domain.com" required />
+        </div>
+      </div>
+
+      <div class="row two">
+        <div>
+          <label for="businessType">Business Type</label>
+          <input id="businessType" name="businessType" placeholder="Coffee shop, Fitness coach, etc." required />
+        </div>
+        <div>
+          <label for="style">Visual Style</label>
+          <select id="style" name="style">
+            <option value="modern">Modern & Clean</option>
+            <option value="bold">Bold & Colorful</option>
+            <option value="minimal">Minimal & Elegant</option>
+            <option value="tech" selected>Futuristic / Tech</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="websiteGoal">Website Goal</label>
+          <textarea id="websiteGoal" name="websiteGoal" rows="3" placeholder="Sell products, collect leads, book appointments, etc." required></textarea>
+          <div class="small">Tip: Be specific for a better preview (e.g., '3 product cards + hero headline + contact form').</div>
+        </div>
+      </div>
+
+      <button id="submitBtn" type="submit">Generate Website 🚀</button>
+      <div id="status" class="status"></div>
+      <div id="result" class="result"></div>
+    </form>
+  </main>
+
+  <footer>© <span id="year"></span> InstantWebsite.ai — Preview generator</footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const form = document.getElementById("generateForm");
+    const statusEl = document.getElementById("status");
+    const resultEl = document.getElementById("result");
+    const btn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusEl.textContent = "Generating preview...";
+      resultEl.style.display = "none";
+      btn.disabled = true;
+
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      try {
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        let json;
+        try { json = await res.json(); } catch { json = null; }
+
+        if (!res.ok) {
+          throw new Error(json && json.error ? json.error : ("Request failed (" + res.status + ")"));
+        }
+
+        if (json && json.success) {
+          statusEl.textContent = "✅ Preview ready";
+          resultEl.innerHTML = `<strong>${json.message}</strong><br><a href="${json.preview}" target="_blank">Open Preview</a>`;
+          resultEl.style.display = "block";
+        } else {
+          throw new Error(json && json.error ? json.error : "Unknown error");
+        }
+      } catch (err) {
+        statusEl.textContent = "❌ " + err.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
