@@ -1,4 +1,14 @@
 export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle OPTIONS request
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -15,25 +25,21 @@ export default async function handler(req, res) {
       });
     }
 
-    // Build the prompt for your AI generator
-    const prompt = `Create a ${style} website for ${businessType}. Goal: ${websiteGoal}. Owner: ${name}`;
-
-    // Here you would call your actual website generation logic
-    // For now, return a mock preview URL
-    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/demo?ts=${Date.now()}`;
+    // For now, return a success response with mock data
+    // Later you can integrate actual AI website generation here
+    const previewUrl = `https://preview.instantwebsite.ai/demo-${Date.now()}`;
 
     return res.status(200).json({
       success: true,
       message: 'Your website preview is ready!',
-      preview: previewUrl,
-      data: { name, email, businessType, style, websiteGoal }
+      preview: previewUrl
     });
 
   } catch (error) {
     console.error('Generation error:', error);
     return res.status(500).json({ 
       success: false, 
-      error: 'Failed to generate preview' 
+      error: 'Failed to generate preview. Please try again.' 
     });
   }
 }
