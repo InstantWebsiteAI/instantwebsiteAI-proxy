@@ -109,7 +109,7 @@
       const data = Object.fromEntries(new FormData(form).entries());
 
       try {
-        const res = await fetch("/api/generate", {
+        const res = await fetch("https://instantwebsite-ai-proxy.vercel.app/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
