@@ -1,17 +1,25 @@
 export default async function handler(req, res) {
-  // Set CORS headers - allow all origins
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+  // ✅ Proper CORS configuration for Shopify & external embedding
+  const allowedOrigins = [
+    'https://instantwebsite-ai-proxy.vercel.app',
+    'https://admin.shopify.com',
+    'https://*.myshopify.com'
+  ];
 
-  // Handle preflight OPTIONS request
+  const origin = req.headers.origin || '';
+  const allowed = allowedOrigins.find(o => origin.includes(o));
+  res.setHeader('Access-Control-Allow-Origin', allowed || 'https://instantwebsite-ai-proxy.vercel.app');
+  res.setHeader('Vary', 'Origin');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST,PUT,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+
+  // Handle preflight
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return res.status(200).end();
   }
 
-  // Only allow POST requests
+  // Allow only POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -19,28 +27,27 @@ export default async function handler(req, res) {
   try {
     const { name, email, businessType, style, websiteGoal } = req.body;
 
-    // Validate required fields
     if (!name || !email || !businessType || !websiteGoal) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Missing required fields' 
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields'
       });
     }
 
-    // Create preview URL with correct domain
-    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/preview.html?ts=${Date.now()}&name=${encodeURIComponent(name)}&business=${encodeURIComponent(businessType)}&style=${encodeURIComponent(style)}`;
+    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/preview.html?ts=${Date.now()}&name=${encodeURIComponent(
+      name
+    )}&business=${encodeURIComponent(businessType)}&style=${encodeURIComponent(style)}`;
 
     return res.status(200).json({
       success: true,
       message: 'Your website preview is ready!',
       preview: previewUrl
     });
-
   } catch (error) {
     console.error('Generation error:', error);
-    return res.status(500).json({ 
-      success: false, 
-      error: 'Failed to generate preview. Please try again.' 
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to generate preview. Please try again.'
     });
   }
 }
