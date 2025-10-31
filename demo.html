@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instant Website Preview</title>
+  <style>
+    body {
+      background: #0e0e12;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Instant Website Preview 🚀</h1>
+  <p>This page will soon show your generated website.</p>
+  <p>Timestamp: <span id="timestamp"></span></p>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    document.getElementById("timestamp").innerText = urlParams.get("ts") || "N/A";
+  </script>
+</body>
+</html>
