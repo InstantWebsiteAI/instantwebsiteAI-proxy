@@ -71,17 +71,39 @@
   </div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    document.getElementById("name").innerText = urlParams.get("name") || "N/A";
-    document.getElementById("business").innerText = urlParams.get("business") || "N/A";
-    
-    const ts = urlParams.get("ts");
-    if (ts) {
-      const date = new Date(parseInt(ts));
-      document.getElementById("timestamp").innerText = date.toLocaleString();
-    } else {
-      document.getElementById("timestamp").innerText = "N/A";
-    }
-  </script>
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get("name") || "N/A";
+  const business = params.get("business") || "N/A";
+  const ts = params.get("ts");
+  const style = params.get("style") || "tech";
+
+  document.getElementById("name").innerText = name;
+  document.getElementById("business").innerText = business;
+  document.getElementById("timestamp").innerText = ts
+    ? new Date(parseInt(ts)).toLocaleString()
+    : "N/A";
+
+  // === Dynamic background styling ===
+  const body = document.body;
+  switch (style.toLowerCase()) {
+    case "modern":
+      body.style.background = "linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)";
+      body.style.color = "#111";
+      break;
+    case "bold":
+      body.style.background = "linear-gradient(135deg, #ff00cc 0%, #3333ff 100%)";
+      break;
+    case "minimal":
+      body.style.background = "#f6f8fa";
+      body.style.color = "#222";
+      break;
+    case "tech":
+    default:
+      body.style.background = "linear-gradient(135deg, #0e0e12 0%, #1a1a2e 100%)";
+      body.style.color = "#fff";
+      break;
+  }
+</script>
+
 </body>
 </html>
