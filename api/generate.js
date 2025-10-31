@@ -1,29 +1,39 @@
-// api/generate.js
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST requests allowed" });
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { name, email, businessType, websiteGoal, style } = req.body || {};
+    const { name, email, businessType, style, websiteGoal } = req.body;
 
+    // Validate required fields
     if (!name || !email || !businessType || !websiteGoal) {
-      return res.status(400).json({ error: "All fields are required" });
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Missing required fields' 
+      });
     }
 
-    // For now, return a deterministic preview URL. You can replace this with your AI HTML generator later.
-    const params = new URLSearchParams({
-      name, goal: websiteGoal, biz: businessType, style: style || "tech"
-    });
-    const preview = `https://instantwebsite.ai/demo?${params.toString()}`;
+    // Build the prompt for your AI generator
+    const prompt = `Create a ${style} website for ${businessType}. Goal: ${websiteGoal}. Owner: ${name}`;
+
+    // Here you would call your actual website generation logic
+    // For now, return a mock preview URL
+    const previewUrl = `https://preview.instantwebsite.ai/${Date.now()}`;
 
     return res.status(200).json({
       success: true,
-      message: "Website generated successfully!",
-      preview
+      message: 'Your website preview is ready!',
+      preview: previewUrl,
+      data: { name, email, businessType, style, websiteGoal }
     });
-  } catch (err) {
-    console.error("Error in /api/generate:", err);
-    return res.status(500).json({ error: "Server error" });
+
+  } catch (error) {
+    console.error('Generation error:', error);
+    return res.status(500).json({ 
+      success: false, 
+      error: 'Failed to generate preview' 
+    });
   }
 }
