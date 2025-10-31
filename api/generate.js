@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
     // Here you would call your actual website generation logic
     // For now, return a mock preview URL
-    const previewUrl = `https://preview.instantwebsite.ai/${Date.now()}`;
+    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/demo?ts=${Date.now()}`;
 
     return res.status(200).json({
       success: true,
