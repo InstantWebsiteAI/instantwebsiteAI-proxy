@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instant Website Preview</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0e0e12 0%, #1a1a2e 100%);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 60px 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.05);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(0,191,255,0.2);
+      box-shadow: 0 10px 40px rgba(0,191,255,0.1);
+    }
+    h1 { 
+      font-size: 2.5em; 
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #00bfff, #00ffae);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .info {
+      background: rgba(0,191,255,0.1);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      text-align: left;
+    }
+    .info p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .label {
+      color: #00bfff;
+      font-weight: bold;
+    }
+    .coming-soon {
+      margin-top: 30px;
+      padding: 15px;
+      background: rgba(255,193,7,0.1);
+      border-left: 4px solid #ffc107;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Preview Generated!</h1>
+    <p style="color: #a7b0c0; font-size: 18px;">Your website details have been captured</p>
+    
+    <div class="info">
+      <p><span class="label">Name:</span> <span id="name">Loading...</span></p>
+      <p><span class="label">Business:</span> <span id="business">Loading...</span></p>
+      <p><span class="label">Generated:</span> <span id="timestamp">Loading...</span></p>
+    </div>
+
+    <div class="coming-soon">
+      <p><strong>⚡ Coming Soon:</strong> Your fully generated AI website will appear here!</p>
+      <p style="font-size: 14px; color: #a7b0c0; margin-top: 10px;">We're working on integrating AI to create your custom website.</p>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    document.getElementById("name").innerText = urlParams.get("name") || "N/A";
+    document.getElementById("business").innerText = urlParams.get("business") || "N/A";
+    
+    const ts = urlParams.get("ts");
+    if (ts) {
+      const date = new Date(parseInt(ts));
+      document.getElementById("timestamp").innerText = date.toLocaleString();
+    } else {
+      document.getElementById("timestamp").innerText = "N/A";
+    }
+  </script>
+</body>
+</html>
