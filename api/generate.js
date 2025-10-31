@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     }
 
     // Create preview URL with correct domain
-    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/preview.html?ts=${Date.now()}&name=${encodeURIComponent(name)}&business=${encodeURIComponent(businessType)}`;
+    const previewUrl = `https://instantwebsite-ai-proxy.vercel.app/preview.html?ts=${Date.now()}&name=${encodeURIComponent(name)}&business=${encodeURIComponent(businessType)}&style=${encodeURIComponent(style)}`;
 
     return res.status(200).json({
       success: true,
